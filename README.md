@@ -1,2 +1,2 @@
-# webpack_share
-webpack分享
+# basics
+webpack基础
