@@ -77,3 +77,6 @@ devServer: {
  }
 },
 ```
+## 多页面
+需要自动生成entry和HtmlWebpackPlugin  
+示例中使用了**glob**来获取文件路径
