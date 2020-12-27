@@ -3,4 +3,4 @@ import pic from './images/6.jpg'
 const img = new Image()
 img.src=pic
 document.getElementById('app').appendChild(img)
-console.log('hello webpack');
+console.log('async sync');

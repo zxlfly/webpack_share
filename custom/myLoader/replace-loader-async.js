@@ -13,6 +13,6 @@ module.exports=function(source){
     console.log(this.query);
     const callback = this.async()
     setTimeout(()=>{
-        this.callback(null,source.replace("hello",this.query.name))
+        this.callback(null,source.replace("async",this.query.name))
     },300)
 }

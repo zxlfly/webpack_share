@@ -6,7 +6,7 @@ module.exports=function(source){
     // 都挂在this上，所以不能用箭头函数
     console.log(this.query);
     // return source.replace("hello",this.query.name)
-    this.callback(null,source.replace("webpack",this.query.name))
+    this.callback(null,source.replace("sync",this.query.name))
 }
 // 异步
 // module.exports=function(source){
