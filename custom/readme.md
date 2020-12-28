@@ -61,7 +61,7 @@ defaults 默认配置 ``> 0.5%`` ``last 2 versions`` ``Firefox ESR`` ``not dead`
 打包文件和源文件的映射，在webpack的配置文件中添加``devtool:"source-map"``即可（具体配置参数请查看文档）。
 主要是为了开发时快速定位问题，线上代码也可以开启前端错误监控，快速定位问题。
 
-## webpack-dev-server
+## webpack-dev-server(浏览器会刷新)
 解决每次改完代码都需要重新打包的问题，相当于热更新  
 需要在``package.json``script下新增``"server": "webpack-dev-server"``  
 在``webpack.config.js``下配置``devServer``。具体配置项请查看文档
@@ -77,3 +77,38 @@ devServer: {
  }
 },
 ```
+
+## Hot Module Replacement (HMR:热模块替换，浏览器不会刷新)
+css模块HMR、js模块HMR  
+不支持抽离出的css，需要使用style-loader 
+devServer配置中开启hot
+**css使用方法**
+注意启动HMR后，css抽离会不⽣效，还有不⽀持contenthash，chunkhash
+``const webpack = require("webpack");``
+``new webpack.HotModuleReplacementPlugin()``
+**js使用方法**
+默认会刷新，需要开启``hotOnly:true``，一般开发项目会使用对应框架的HMR loader，本示例中只是简单的原理实现
+``const webpack = require("webpack");``
+``new webpack.HotModuleReplacementPlugin()``
+入口js中开启监听
+
+## babel（[中文文档](https://www.babeljs.cn/)）
+js的编译器，可以将es6+的代码转换成目标版本的代码。在执行编译的过程中，会从项目根目录下的**.babelrc**json文件中读取配置。没有该文件会从loader的options地方读取配置。
+**安装**
+``npm i babel-loader @babel/core @babel/preset-env -D``
+**babel-loader**是webpack与babel通信桥梁，实际编译是@babel/preset-env来做。@babel/preset-env⾥包含了es，6，7，8转es5的转换规则。  
+preset目前所支持的所有类型
+- @babel/preset-env
+- @babel/preset-flow
+- @babel/preset-react
+- @babel/preset-typescript
+到这里除了新特性以外的都处理好了，但是新特性没有处理。需要第三方包含es6+新特性的js库来处理。  
+但是如果直接引用会导致打包体积过大，需要配置成按需加载。
+``npm install @babel/polyfill -D``
+安装之后可以在入口直接引入，但是这样是全部引入，体积过大，不推荐使用。
+配置**presets**的时候可以配置按需加载，推荐直接安装``@babel/polyfill``生产所需要的两个库，不安装``@babel/polyfill``
+```
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+```
+也可以将这些配置抽离到单独的配置文件``.babelrc``

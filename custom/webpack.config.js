@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin =require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require("webpack");
 module.exports = {
     entry: {
         index: "./src/index.js"
@@ -28,20 +29,21 @@ module.exports = {
                 test: /\.less$/,
                 use: [
                     "style-loader", 
-                    "css-loader", "postcss-loader", 
+                    "css-loader", 
+                    "postcss-loader", 
                     "less-loader"
                 ]
             }, {
                 test: /\.scss$/,
                 use: [
-                    {
-                        loader:MiniCssExtractPlugin.loader,
-                        // 局部拼接（图像、文件、外部资源定义公共路径）
-                        options:{
-                            publicPath:'../'
-                        }
-                    },
-                    // "style-loader", 
+                    // {
+                    //     loader:MiniCssExtractPlugin.loader,
+                    //     // 局部拼接（图像、文件、外部资源定义公共路径）
+                    //     options:{
+                    //         publicPath:'../'
+                    //     }
+                    // },
+                    "style-loader", 
                     "css-loader",  
                     'postcss-loader', 
                     "sass-loader"
@@ -71,17 +73,36 @@ module.exports = {
                 test: /\.js$/,
                 // loader执行顺序从右到左
                 use: [
+                    // {
+                    //     loader:"replace-loader",
+                    //     options:{
+                    //         name:'同步'
+                    //     }
+                    // },
+                    // {
+                    //     loader:"replace-loader-async",
+                    //     options:{
+                    //         name:'异步'
+                    //     }
+                    // },
                     {
-                        loader:"replace-loader",
-                        options:{
-                            name:'同步'
-                        }
-                    },
-                    {
-                        loader:"replace-loader-async",
-                        options:{
-                            name:'异步'
-                        }
+                        loader: "babel-loader",
+                        // options: {
+                        //   presets: [[
+                        //     '@babel/preset-env',
+                        //     {
+                        //         // 目标浏览器
+                        //         // targets:{
+
+                        //         // },
+                        //         corejs:2,
+                        //         useBuiltIns:"usage"
+                        //         // entry: 需要在 webpack 的⼊⼝⽂件⾥ import "@babel/polyfill" ⼀次。 babel 会根据你的使⽤情况导⼊垫⽚，没有使⽤的功能不会被导⼊相应的垫⽚。
+                        //         // usage: 不需要import ，全⾃动检测，但是要安装 @babel/polyfill 。（试验阶段）
+                        //         // false: 如果你 import"@babel/polyfill" ，它不会排除掉没有使⽤的垫⽚，程序体积会庞⼤。(不推荐)
+                        //     }
+                        //   ]]
+                        // }
                     }
                 ]
             },
@@ -96,6 +117,9 @@ module.exports = {
         contentBase: "./dist",
         open: true,
         port: 8088,
+        hot:true,
+        //即便HMR不⽣效，浏览器也不⾃动刷新，就开启hotOnly
+        hotOnly:true,
         proxy: {
           "/api": {
             target: "http://localhost:9092/",
@@ -112,6 +136,7 @@ module.exports = {
         }),
         new MiniCssExtractPlugin({
             filename:"css/[name]-[hash:6].css",
-        })
+        }),
+        new webpack.HotModuleReplacementPlugin()
     ],
 }
