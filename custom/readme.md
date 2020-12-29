@@ -104,7 +104,7 @@ preset目前所支持的所有类型
 - @babel/preset-typescript
 到这里除了新特性以外的都处理好了，但是新特性没有处理。需要第三方包含es6+新特性的js库来处理。  
 但是如果直接引用会导致打包体积过大，需要配置成按需加载。
-``npm install @babel/polyfill -D``
+``npm install --save @babel/polyfill``
 安装之后可以在入口直接引入，但是这样是全部引入，体积过大，不推荐使用。
 配置**presets**的时候可以配置按需加载，推荐直接安装``@babel/polyfill``生产所需要的两个库，不安装``@babel/polyfill``
 ```
