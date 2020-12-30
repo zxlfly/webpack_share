@@ -71,40 +71,23 @@ module.exports = {
             }, 
             {
                 test: /\.js$/,
+                exclude: /node_modules/,
+                use:"babel-loader"
                 // loader执行顺序从右到左
-                use: [
-                    // {
-                    //     loader:"replace-loader",
-                    //     options:{
-                    //         name:'同步'
-                    //     }
-                    // },
-                    // {
-                    //     loader:"replace-loader-async",
-                    //     options:{
-                    //         name:'异步'
-                    //     }
-                    // },
-                    {
-                        loader: "babel-loader",
-                        options: {
-                          presets: [[
-                            '@babel/preset-env',
-                            {
-                                // 目标浏览器
-                                // targets:{
-
-                                // },
-                                corejs:2,
-                                useBuiltIns:"usage"
-                                // entry: 需要在 webpack 的⼊⼝⽂件⾥ import "@babel/polyfill" ⼀次。 babel 会根据你的使⽤情况导⼊垫⽚，没有使⽤的功能不会被导⼊相应的垫⽚。
-                                // usage: 不需要import ，全⾃动检测，但是要安装 @babel/polyfill 。（试验阶段）
-                                // false: 如果你 import"@babel/polyfill" ，它不会排除掉没有使⽤的垫⽚，程序体积会庞⼤。(不推荐)
-                            }
-                          ]]
-                        }
-                    }
-                ]
+                // use: [
+                //     // {
+                //     //     loader:"replace-loader",
+                //     //     options:{
+                //     //         name:'同步'
+                //     //     }
+                //     // },
+                //     // {
+                //     //     loader:"replace-loader-async",
+                //     //     options:{
+                //     //         name:'异步'
+                //     //     }
+                //     // },
+                // ]
             },
 
         ]
@@ -134,9 +117,9 @@ module.exports = {
             template:"./src/index.html",
             filename:"index.html",
         }),
-        new MiniCssExtractPlugin({
-            filename:"css/[name]-[hash:6].css",
-        }),
+        // new MiniCssExtractPlugin({
+        //     filename:"css/[name]-[hash:6].css",
+        // }),
         new webpack.HotModuleReplacementPlugin()
     ],
 }

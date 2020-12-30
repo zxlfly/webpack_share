@@ -13,6 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.12.10",
+    "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
     "autoprefixer": "^10.0.0",
     "babel-loader": "^8.2.2",
@@ -35,7 +36,5 @@
     "webpack-dev-server": "^3.11.0",
     "webpack-node-externals": "^2.5.2"
   },
-  "dependencies": {
-    "@babel/polyfill": "^7.12.1"
-  }
+  "dependencies": {}
 }

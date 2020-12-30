@@ -112,3 +112,9 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 ```
 也可以将这些配置抽离到单独的配置文件``.babelrc``
+**targets**目标浏览器版本，也可以使用``.browserslistrc``  
+**corejs**corejs的版本  
+**useBuiltIns**模式，有三种参数
+- entry: 需要在 webpack 的⼊⼝⽂件⾥ import "@babel/polyfill" ⼀次。 babel 会根据你的使⽤情况导⼊垫⽚，没有使⽤的功能不会被导⼊相应的垫⽚。
+- usage: 不需要import ，全⾃动检测，但是要安装 @babel/polyfill 。（试验阶段）
+- false: 如果你 import"@babel/polyfill" ，它不会排除掉没有使⽤的垫⽚，程序体积会庞⼤。(不推荐)
