@@ -1,4 +1,4 @@
-// import "@babel/polyfill"
+import "@babel/polyfill"
 console.log(666);
 const arr = [new Promise(() => {}), new Promise(() => {})];
 async function zxl(){
