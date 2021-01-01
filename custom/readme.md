@@ -93,20 +93,21 @@ devServer配置中开启hot
 入口js中开启监听
 
 ## babel（[中文文档](https://www.babeljs.cn/)）
+**babel文件夹下有其他实现方式**
 js的编译器，可以将es6+的代码转换成目标版本的代码。在执行编译的过程中，会从项目根目录下的**.babelrc**json文件中读取配置。没有该文件会从loader的options地方读取配置。
 **安装**
 ``npm i babel-loader @babel/core @babel/preset-env -D``
 **babel-loader**是webpack与babel通信桥梁，实际编译是@babel/preset-env来做。@babel/preset-env⾥包含了es，6，7，8转es5的转换规则。  
-preset目前所支持的所有类型
+preset目前所支持的所有类型（语法转换）
 - @babel/preset-env
 - @babel/preset-flow
 - @babel/preset-react
 - @babel/preset-typescript
 到这里除了新特性以外的都处理好了，但是新特性没有处理。需要第三方包含es6+新特性的js库来处理。  
 但是如果直接引用会导致打包体积过大，需要配置成按需加载。
-``npm install --save @babel/polyfill``
+``npm install --save @babel/polyfill``(内置对象、实例方法转换)
 安装之后可以在入口直接引入，但是这样是全部引入，体积过大，不推荐使用。
-配置**presets**的时候可以配置按需加载，推荐直接安装``@babel/polyfill``生产所需要的两个库，不安装``@babel/polyfill``
+配置**presets**的时候可以配置按需加载
 ```
 import "core-js/stable";
 import "regenerator-runtime/runtime";
@@ -114,7 +115,7 @@ import "regenerator-runtime/runtime";
 也可以将这些配置抽离到单独的配置文件``.babelrc``
 **targets**目标浏览器版本，也可以使用``.browserslistrc``  
 **corejs**corejs的版本  
-**useBuiltIns**模式，有三种参数
+**useBuiltIns**控制``preset``使用何种方式帮我们导入polyfill的核心，有三种参数
 - entry: 需要在 webpack 的⼊⼝⽂件⾥ import "@babel/polyfill" ⼀次。 babel 会根据你的使⽤情况导⼊垫⽚，没有使⽤的功能不会被导⼊相应的垫⽚。
 - usage: 不需要import ，全⾃动检测，但是要安装 @babel/polyfill 。（试验阶段）
 - false: 如果你 import"@babel/polyfill" ，它不会排除掉没有使⽤的垫⽚，程序体积会庞⼤。(不推荐)

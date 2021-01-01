@@ -10,8 +10,11 @@
                     "chrome": "67",
                     "safari": "11"
                   },
-                "corejs": 2 //新版本需要指定核⼼库版本
-                // "useBuiltIns": "usage" //按需注⼊
+                "corejs": { 
+                      "version": 3, 
+                      "proposals": true 
+                } ,//新版本需要指定核⼼库版本
+                "useBuiltIns": "usage" //按需注⼊
             }
         ]
     ]
