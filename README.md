@@ -44,3 +44,18 @@ webpack基础
 自定义plugin  
 webpack在编译的过程中，会触发一系列tapable钩子事件，插件就是找到对应的钩子，往上面挂任务，这样在构建的时候，插件注册的事件就能随着钩子的触发而执行了。  
 plugin是一个类，包含一个apply函数，接受一个参数compiler。注册的事件接受Compilation。 
+
+# webpack打包bundle原理
+bundle文件就是一个自执行的函数，参数是一个对象，入口模块为key，value就是一个函数有两个参数module和exports，内部为对应被处理过后的代码（被eval执行解析）。  
+自执行的函数部分通过modules形参接受参数  
+### 实现一个简版webpack
+- 接受一份配置（webpack.config.js）
+- 分析出入口模块位置
+  - 读取入口模块的内容，解析内容
+    - 区分源码和依赖
+    - 递归调用处理依赖
+- 拿到对象形式的数据结构
+  - 模块路径
+  - 处理好的内容
+- 创建bundle.js
+  - 启动器函数，来补充代码里有可能出现的的module exports require，让浏览器能够顺利的执⾏
