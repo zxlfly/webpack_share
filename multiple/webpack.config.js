@@ -2,6 +2,8 @@ const path = require("path");
 const HtmlWebpackPlugin =require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MyLogWebpackPlugin =require('./myplugins/myLog-webpack-plugin.js')
+const TxtWebpackPlugin = require('./myplugins/txt-webpack-plugin.js')
 const glob = require("glob")
 const loaderPages =()=>{
     const entry={}
@@ -131,6 +133,10 @@ module.exports = {
         ...HtmlWebpackPlugins,
         new MiniCssExtractPlugin({
             filename:"css/[name]-[hash:6].css",
+        }),
+        new TxtWebpackPlugin(),
+        new MyLogWebpackPlugin({
+            name:'xiu'
         })
     ],
 }
