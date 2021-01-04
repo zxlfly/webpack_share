@@ -33,7 +33,6 @@ module.exports = {
         new HtmlWebpackPlugin({
             template:"./src/index.html",
             filename:"index.html",
-            minify
         }),
         // 打包清空dist冗余文件
         new CleanWebpackPlugin()
