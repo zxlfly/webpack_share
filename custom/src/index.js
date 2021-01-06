@@ -1,4 +1,4 @@
-// import css from './css/index.scss'
+import css from './css/index.scss'
 // import pic from './images/6.jpg'
 // import counter from "./counter";
 // import number from "./number";
@@ -14,6 +14,7 @@
 //         number();
 //     });
 // }
+// import "@babel/polyfill"
 const arr = [new Promise(() => {}), new Promise(() => {})];
 arr.map((item) => {
   console.log(item);

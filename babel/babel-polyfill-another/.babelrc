@@ -1,0 +1,21 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "targets": {
+                    //目标环境
+                    "edge": "8",
+                    "firefox": "60",
+                    "chrome": "67",
+                    "safari": "11"
+                  },
+                "corejs": { 
+                      "version": 3, 
+                      "proposals": true 
+                } ,//新版本需要指定核⼼库版本
+                "useBuiltIns": "usage" //按需注⼊
+            }
+        ]
+    ]
+}

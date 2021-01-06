@@ -1,0 +1,1 @@
+export const str4 = "d";
