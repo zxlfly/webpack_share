@@ -59,3 +59,5 @@ bundle文件就是一个自执行的函数，参数是一个对象，入口模�
   - 处理好的内容
 - 创建bundle.js
   - 启动器函数，来补充代码里有可能出现的的module exports require，让浏览器能够顺利的执⾏
+
+# 公共库library
