@@ -60,4 +60,187 @@ bundle文件就是一个自执行的函数，参数是一个对象，入口模�
 - 创建bundle.js
   - 启动器函数，来补充代码里有可能出现的的module exports require，让浏览器能够顺利的执⾏
 
-# 公共库library
+# 公共库library(发布npm包)
+``output.library``来指定库名  
+``output.libraryTarget``指定打包规范
+```
+// var config
+{
+ output: {
+ library: 'myLib',
+ filename: 'var.js',
+ libraryTarget: 'var'
+ }
+}
+// output
+var myLib = (function(modules) {})({
+ './src/index.js': function(module, exports) {}
+});
+// ===============================================
+// assign config
+{
+ output: {
+ library: 'myLib',
+ filename: 'assign.js',
+ libraryTarget: 'assign'
+ }
+}
+// output： 少了个 var
+myLib = (function(modules) {})({
+ './src/index.js': function(module, exports) {}
+});
+// ===============================================
+// this config
+{
+ output: {
+ library: 'myLib',
+ filename: 'this.js',
+ libraryTarget: 'this'
+ }
+}
+// output
+this["myLib"] = (function(modules) {})({
+ './src/index.js': function(module, exports) {}
+});
+// ===============================================
+// window config
+{
+ output: {
+ library: 'myLib',
+ filename: 'window.js',
+ libraryTarget: 'window'
+ }
+}
+// output
+window["myLib"] = (function(modules) {})({
+ './src/index.js': function(module, exports) {}
+});
+// ===============================================
+// global config
+{
+ output: {
+ library: 'myLib',
+ filename: 'global.js',
+ libraryTarget: 'global'
+ }
+}
+// output：注意 target=node 的时候才是 global，默认 target=web下global 为 window
+window["myLib"] = (function(modules) {})({
+ './src/index.js': function(module, exports) {}
+});
+// ===============================================
+// commonjs config
+{
+ output: {
+ library: 'myLib',
+ filename: 'commonjs.js',
+ libraryTarget: 'commonjs'
+ }
+}
+// output
+exports["myLib"] = (function(modules) {})({
+   './src/index.js': function(module, exports) {}
+});
+// ===============================================
+// amd config
+{
+ output: {
+ library: 'myLib',
+ filename: 'amd.js',
+ libraryTarget: 'amd'
+ }
+}
+// output
+define('myLib', [], function() {
+ return (function(modules) {})({
+ './src/index.js': function(module, exports) {}
+ });
+});
+// ===============================================
+// umd config
+{
+ output: {
+ library: 'myLib',
+ filename: 'umd.js',
+ libraryTarget: 'umd'
+ }
+}
+// output
+(function webpackUniversalModuleDefinition(root, factory) {
+ if (typeof exports === 'object' && typeof module === 'object')
+module.exports = factory();
+ else if (typeof define === 'function' && define.amd) define([], factory);
+ else if (typeof exports === 'object') exports['myLib'] = factory();
+ else root['myLib'] = factory();
+})(window, function() {
+ return (function(modules) {})({
+ './src/index.js': function(module, exports) {}
+ });
+});
+// ===============================================
+// commonjs2 config
+{
+ output: {
+ library: 'myLib',
+ filename: 'commonjs2.js',
+ libraryTarget: 'commonjs2'
+ }
+}
+// output
+module.exports = (function(modules) {})({
+ './src/index.js': function(module, exports) {}
+});
+// ===============================================
+// umd2 config
+{
+ output: {
+ library: 'myLib',
+ filename: 'umd2.js',
+ libraryTarget: 'umd2'
+ }
+}
+// output
+(function webpackUniversalModuleDefinition(root, factory) {
+ if (typeof exports === 'object' && typeof module === 'object')
+module.exports = factory();
+ else if (typeof define === 'function' && define.amd) define([], factory);
+ else if (typeof exports === 'object') exports['myLib'] = factory();
+ else root['myLib'] = factory();
+})(window, function() {
+ return (function(modules) {})({
+ './src/index.js': function(module, exports) {
+ }
+ });
+});
+// ===============================================
+// commonjs-module config
+{
+ output: {
+ library: 'myLib',
+ filename: 'commonjs-module.js',
+ libraryTarget: 'commonjs-module'
+ }
+}
+// ===============================================
+// output
+module.exports = (function(modules) {})({
+ './src/index.js': function(module, exports) {}
+});
+// ===============================================
+// jsonp config
+{
+ output: {
+ library: 'myLib',
+ filename: 'jsonp.js',
+ libraryTarget: 'jsonp'
+ }
+}
+// output
+myLib((function(modules) {})({
+ './src/index.js': function(module, exports) {}
+}));
+```
+libraryTarget=global 的时候，如果 target=node 才是 global，默认target=web
+下 global 为 window，保险起⻅可以使⽤ this
+
+# 性能优化
