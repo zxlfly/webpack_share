@@ -244,3 +244,5 @@ libraryTarget=global 的时候，如果 target=node 才是 global，默认target
 下 global 为 window，保险起⻅可以使⽤ this
 
 # 性能优化
+示例复用了mutiple的demo，可以对两者进行对比  
+优化开发体验和输出质量
