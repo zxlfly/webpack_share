@@ -38,12 +38,15 @@ module.exports = {
         // publicPath:"../"
     },
     mode: "development",
+    resolve: {
+        modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+    },
     module: {
         rules: [
             {
                 test: /\.css$/,
+                include:path.join(__dirname,'src/css'),
                 // loader执行顺序从右到左
-                include:"./src/css",
                 use: [
                     'style-loader', 
                     'css-loader', 
@@ -51,7 +54,7 @@ module.exports = {
                 ]
             }, {
                 test: /\.less$/,
-                include:"./src/css",
+                include:path.join(__dirname,'src/css'),
                 use: [
                     "style-loader", 
                     "css-loader", "postcss-loader", 
@@ -59,23 +62,23 @@ module.exports = {
                 ]
             }, {
                 test: /\.scss$/,
-                include:"./src/css",
+                include:path.join(__dirname,'src/css'),
                 use: [
-                    {
-                        loader:MiniCssExtractPlugin.loader,
-                        // 局部拼接（图像、文件、外部资源定义公共路径）
-                        options:{
-                            publicPath:'../'
-                        }
-                    },
-                    // "style-loader", 
+                    'thread-loader',
+                    // {
+                    //     loader:MiniCssExtractPlugin.loader,
+                    //     // 局部拼接（图像、文件、外部资源定义公共路径）
+                    //     options:{
+                    //         publicPath:'../'
+                    //     }
+                    // },
+                    "style-loader", 
                     "css-loader",  
                     'postcss-loader', 
                     "sass-loader"
                 ]
             },{
                 test: /\.(png|jpe?g|gif)$/,
-                include:"./src/images",
                 loader: "url-loader",
                 // options额外的配置，⽐如资源名称
                 options: {
@@ -87,14 +90,18 @@ module.exports = {
                 }
             },{
                 test: /\.(eot|svg|ttf|woff|woff2)$/,
-                include:"./src/font",
-                loader: "file-loader",
-                // options额外的配置，⽐如资源名称
-                options: {
-                    name: "[name]-[hash:6].[ext]",
-                    //打包后的存放位置
-                    outputPath: "font/",
-                }
+                use:[
+                    'thread-loader',
+                    {
+                        loader: "file-loader",
+                        // options额外的配置，⽐如资源名称
+                        options: {
+                            name: "[name]-[hash:6].[ext]",
+                            //打包后的存放位置
+                            outputPath: "font/",
+                        }
+                    }
+                ],
             }, 
             {
                 test: /\.js$/,

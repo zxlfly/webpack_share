@@ -44,9 +44,13 @@
 ## 利用多线程提升构建速度
 - webpack是运行在node之上的，时单线程。但是我们可以利用cpu的多核同时运行加快速度。
 - 但是这个不是绝对的，如果电脑配置不好，不一定能起到正效果，例如开启多线程耗时过多等
-## thread-loader是针对loader进行优化的
+## [thread-loader](https://webpack.docschina.org/loaders/thread-loader/#root)是针对loader进行优化的
 - 它将loader放置在一个worker池里面运行，以达到多线程构建。
 - 使用时，需要将其放置在其他loader之前
+- 如果耗时不大不建议开启，每一个worker都是一个独立的nodejs进程，开销大约为600ms左右；同时还有一些其他限制
+  - 这些 loader 不能生成新的文件。
+  - 这些 loader 不能使用自定义的 loader API（也就是说，不能通过插件来自定义）。
+  - 这些 loader 无法获取 webpack 的配置。
 ```
 {
   test: /\.js$/,
@@ -57,6 +61,7 @@
   ]
 }
 ```
+- 本示例中强行开启了多线程处理字体文件(由于限制所以不能使用MiniCssExtractPlugin.loader)，实际打包时间反而变长了，因为字体文件很小数量也少，开启多线程本身消耗的时间反而更长
 ## 缓存cache相关
 - babel-loader
   - webpack打包中核心是js文件的打包
