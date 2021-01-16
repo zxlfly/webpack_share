@@ -120,7 +120,86 @@ module.exports = {
   - 推荐使用include指定搜索目录
   - exclude 优先级要优于 include 和 test ，所以当三者配置有冲突时， exclude 会优先于其他两
 个配置。
-- plugin
 
 ## development vs Production模式区分打包
-``npm install webpack-merge -D``
+``npm install webpack-merge -D``  
+新建三个webpack的配置文件，文件名作如下区分：  
+- base基础公用的部分
+- dev开发配置部分
+- prod生产配置部分
+
+
+### HtmlWebpackPlugin压缩配置（html）
+```
+//示例中的代码
+new HtmlWebpackPlugin({
+    template:path.join(__dirname,`./src/pages/${match[1]}/${match[1]}.html`),
+    filename:`pages/${match[1]}.html`,
+    chunks:[match[1]],
+    minify:{
+        removeComments:true,
+        collapseWhitespace:true,
+        minifyCSS:true
+    }
+})
+```
+
+### css压缩
+``css-loader``中已经集成了``cssnano``，我们还可以使用``optimize-css-assets-webpack-plugin``来⾃定义 ``cssnano`` 的规则。它的默认css压缩引擎就是``cssnano``。
+```
+npm install cssnano -D
+npm i optimize-css-assets-webpack-plugin -D
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+new OptimizeCSSAssetsPlugin({
+  cssProcessor: require("cssnano"), // 这⾥制定了引擎，不指定默认也是 cssnano
+  cssProcessorOptions: {
+    discardComments: { removeAll: true }
+  }
+})
+```
+
+
+### 压缩js
+**production**模式下webpack会自动压缩，我们也可以自定义压缩工具。例如：``terser-webpack-plugin``,这是一个官方维护的插件，可以处理es6代码。
+```
+const TerserPlugin = require('terser-webpack-plugin');
+module.exports = {
+  optimization: {
+    minimizer: [
+      new TerserPlugin()
+    ]
+  }
+};
+```
+实际的开发中，我们可以通过移除一些不用的代码优化体积，``Tree-Shaking``也是依赖这个插件
+```
+new TerserPlugin({
+  // 使⽤ cache，加快⼆次构建速度
+  cache: true,
+  terserOptions: {
+    comments: false,
+    compress: {
+      // 删除⽆⽤的代码
+      unused: true,
+      // 删掉 debugger
+      drop_debugger: true, // eslint-disable-line
+      // 移除 console
+      drop_console: true, // eslint-disable-line
+      // 移除⽆⽤的代码
+      dead_code: true // eslint-disable-line
+    }
+  }
+});
+```
+
+压缩发布的时候耗时问题可以通过``terser-webpack-plugin``来开启多线程来加速
+```
+const TerserPlugin = require('terser-webpack-plugin');
+module.exports = {
+  optimization: {
+    minimizer: [new TerserPlugin(
+      parallel: true // 多线程
+    )],
+  },
+};
+```

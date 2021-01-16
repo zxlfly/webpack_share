@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack",
-    "server": "webpack-dev-server"
+    "dev": "webpack --config ./webpack.dev.config.js",
+    "server": "webpack-dev-server",
+    "build":"webpack --config ./webpack.prod.config.js"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +33,7 @@
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.7.3",
     "webpack-node-externals": "^2.5.2"
   },
   "dependencies": {}
