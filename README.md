@@ -269,3 +269,9 @@ lighthouse http://baidu.com --output=json --output-path=./report.json
 //模拟器设为桌面 
 //lighthouse http://baidu.com --emulated-form-factor=desktop
 ```
+性能报告
+- Perfermance 性能分析
+- Accessibility 可访问性
+- Best Practices 最佳实践
+- SEO 搜索引擎优化
+- Progressive Web App 是否集成pwa
