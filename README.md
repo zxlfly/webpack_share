@@ -246,3 +246,26 @@ libraryTarget=global 的时候，如果 target=node 才是 global，默认target
 # 性能优化
 示例复用了mutiple的demo，可以对两者进行对比  
 优化开发体验和输出质量
+
+### 性能数据收集工具分析
+- chrome dev Tools
+  - 我们经常使用 Chrome Dev Tools 来开发调试，还可以利用它来分析页面性能
+- Lighthouse：一个开源的自动化工具，可以安装为Chrome的扩展插件，也可以命令行直接运行，可以针对目标页面进行一连串的测试，然后输出一个有关页面的性能评分报告
+- 第三方收费方案（贵）
+  - NewRelic
+  - 阿里云ARMS
+- 还可以自研相关监控系统。。。
+
+#### LightHouse使用方式
+可以使用Chrome扩展插件，这里介绍[Node Cli](https://github.com/GoogleChrome/lighthouse#using-the-node-cli)
+```
+//安装 npm install -g lighthouse 
+//生成报告 并在浏览器中打开 
+lighthouse http://baidu.com --view 
+//报告格式是json，保存在当前目录 
+lighthouse http://baidu.com --output=json --output-path=./report.json 
+//设置浏览器的窗口尺寸 
+//lighthouse http://baidu.com --chrome-flags="--window-size=1190,660" 
+//模拟器设为桌面 
+//lighthouse http://baidu.com --emulated-form-factor=desktop
+```

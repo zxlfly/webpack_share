@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const {merge} = require("webpack-merge")
 const baseConfig = require("./webpack.base.config")
 const glob = require("glob")
+const optimizeCss= require("optimize-css-assets-webpack-plugin")
 const loaderPages =()=>{
     const entry={}
     const HtmlWebpackPlugins = []
@@ -79,6 +80,9 @@ const prodConfig = {
     plugins: [
         // 生成html
         ...HtmlWebpackPlugins,
+        new optimizeCss({
+            cssProcessor: require('cssnano'),
+        }),
         new MiniCssExtractPlugin({
             filename:"css/[name]-[hash:6].css",
         }),
