@@ -6,10 +6,17 @@ module.exports={
     },
     output:{
         filename:"[name].js",
-        library:"zxl-addnum",//库名
+        library:"zxl_addnum",//库名
         libraryTarget:'umd',//模式 umd有兼容性的判断处理
         libraryExport:"default",//导出module的default值，打包的js文件里面的方法就可以直接使用了
+        /**
+     * <script src="./addnum.js"></script>
+        <script>
+            console.log(zxl_addnum);
+        </script>
+     */
     },
+    
     // 我们需要控制那个文件需要压缩那个不需要，所以需要关闭默认压缩。使用terser插件来控制
     mode:"none",
     // 者这里面配置
