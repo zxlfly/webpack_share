@@ -12,7 +12,7 @@
 安装最新的体验版本``npm i -D webpack@beta``
 安装webpack V4+版本时，需要额外安装webpack-cli``npm i -D webpack-cli``
 # 执行构建
-**npx方式**``npm webpack``
+**npx方式**``npx webpack``
 这种会先在项目的node_modules下查找是否安装webpack，如果安装了就直接执行webpack构建，如果没有安装就会在项目中安装webpack
 **npm方式**``npm run start``
 需要手动去package文件配置script ``"start": "webpack"``
