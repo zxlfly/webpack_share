@@ -129,8 +129,19 @@ new webpack.HotModuleReplacementPlugin()
 ### 处理css模块HMR
 注意启动HMR后，css抽离会不⽣效，还有不⽀持contenthash，chunkhash
 ### 处理js模块HMR
-需要使⽤module.hot.accept来观察模块更新 从⽽更新
-
+#### 原理
+关闭浏览器刷新hotOnly:true,再使⽤module.hot.accept来观察模块更新 从⽽更新
+```
+if(module.hot){
+  module.hot.accept('模块路径',()=>{
+    // 通过id找到对应模块
+    //移除
+    //重新执行
+  })
+}
+```
+#### [其他代码和框架](https://webpack.docschina.org/guides/hot-module-replacement/#other-code-and-frameworks)
+常用的vue、react对应的loader都已经提供相应的功能
 ## Babel处理js语法和特性问题
 Babel在执⾏编译的过程中，会从项⽬根⽬录下的 .babelrc⽂件中读取配置。没有该⽂件会从loader的options地⽅读取配置。
 ### @babel/plugin-transform-runtime
@@ -166,3 +177,5 @@ Babel在执⾏编译的过程中，会从项⽬根⽬录下的 .babelrc⽂件中
 ```
 
 ## 优化
+
+## 规范
