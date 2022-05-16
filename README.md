@@ -14,6 +14,7 @@ webpack基础
 自定义多页应用工程
 
 # babel
+**babel是一个工具链，工具集，通过各种插件将代码转换为向后兼容的 JavaScript 语法。**  
 在**custom**中有一个示例使用的``@babel/polyfill``默认配置，但是官方现在不推荐了，在**babel**中有其他实现方式
 - @babel/runtime + @babel/runtime-corejs3 + @babel/plugin-transform-runtime
 - @babel/polyfill + core-js@3  
