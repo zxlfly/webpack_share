@@ -1,5 +1,5 @@
 # demo
-基于webpack5实现的多入口应用demo
+基于webpack5实现的多页面应用demo
 ## 初始化
 ```
 npm init -y # 初始化npm配置⽂件
