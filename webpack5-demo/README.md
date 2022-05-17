@@ -11,14 +11,15 @@ npm install --save-dev webpack-cli # 安装命令⾏⼯具
 ### 集成css样式处理：css-loader style-loader
 ``npm install style-loader css-loader -D``
 ### 集成less sass
-不要使用node-sass
-``npm install sass sass-loader -D``
+不要使用node-sass  
+``npm install sass sass-loader -D``  
 ``npm install less less-loader -D``
 ### 集成postcss
 相当于babel于JS。postcss主要功能只有两个：第⼀就是把css解析成JS可以操作的抽象语法树AST，第⼆就是调⽤插
 件来处理AST并得到结果；所以postcss⼀般都是通过插件来处理css，并不会直接处理。比如
 - ⾃动补⻬浏览器前缀: autoprefixer
 - css压缩等 cssnano
+
 ``npm install postcss postcss-loader autoprefixer cssnano -D``
 ```
 module.exports = {
