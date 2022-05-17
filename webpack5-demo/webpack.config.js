@@ -94,6 +94,9 @@ module.exports = {
                 test: /\.js$/,
                 // loader执行顺序从右到左
                 use: [
+                    {
+                        loader: "babel-loader"
+                    }
                     // {
                     //     loader: "replace-loader",
                     //     options: {

@@ -147,7 +147,7 @@ if(module.hot){
 ## Babel处理js语法和特性问题
 Babel在执⾏编译的过程中，会从项⽬根⽬录下的 .babelrc⽂件中读取配置。没有该⽂件会从loader的options地⽅读取配置。
 ### @babel/plugin-transform-runtime
-``npm install --save-dev @babel/plugin-transform-runtime @babel/runtime``  
+``npm install --save-dev @babel/plugin-transform-runtime @babel/runtime babel-loader @babel/core @babel/preset-env``  
 ``npm install --save @babel/runtime-corejs3``  
 ```
 {
