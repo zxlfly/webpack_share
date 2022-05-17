@@ -19,7 +19,7 @@ npm install --save-dev webpack-cli # 安装命令⾏⼯具
 件来处理AST并得到结果；所以postcss⼀般都是通过插件来处理css，并不会直接处理。比如
 - ⾃动补⻬浏览器前缀: autoprefixer
 - css压缩等 cssnano
-``npm install postcss-loader autoprefixer cssnano -D``
+``npm install postcss postcss-loader autoprefixer cssnano -D``
 ```
 module.exports = {
   plugins: [require("autoprefixer"), require("cssnano")],
@@ -65,7 +65,7 @@ clean-webpack-plugin:如何做到dist⽬录下某个⽂件或⽬录不被清空�
 ``cleanOnceBeforeBuildPatterns: ["/*", "!dll", "!dll/"]``！感叹号相当于exclude 排除，意思是清空操作排除dll⽬录，和dll⽬录下所有⽂件。 注意：数组列表⾥的“*/”是默认值，不可忽略，否则不做清空操作。  
 ``npm install --save-dev clean-webpack-plugin``  
 
-## sourceMap
+## [sourceMap](https://www.webpackjs.com/configuration/devtool/)
 源代码与打包后的代码的映射关系，通过sourceMap定位到源代码。在dev模式中，默认开启，关闭的话 可以在配置⽂件⾥配置[devtool](https://webpack.js.org/configuration/devtool#devtool)：``devtool:"none"``  
 - eval:速度最快,使⽤eval包裹模块代码,
 - source-map： 产⽣ .map ⽂件
@@ -84,7 +84,7 @@ devtool:"cheap-module-source-map", // 线上⽣成配置
 修改下package.json
 ```
 "scripts": {
- "server": "webpack-dev-server"
+ "server": "webpack serve"
  },
 ```
 在webpack.config.js配置
@@ -110,9 +110,10 @@ devServer: {
     static: "./dist",
     open: true,
     port: 8081,
-    hot:true,
-    //即便HMR不⽣效，浏览器也不⾃动刷新，就开启hotOnly
-    hotOnly:true,
+    //实例所使用的版本已经不需要手动配置默认开启
+    // hot:true,
+    //即便HMR不⽣效，浏览器也不⾃动刷新，就开启hotOnly jshmr使用
+    // hotOnly:true,
     proxy: {
       "/api": {
         target: "http://localhost:9092",
