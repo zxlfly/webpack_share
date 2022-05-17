@@ -129,7 +129,7 @@ devServer: {
 new webpack.HotModuleReplacementPlugin()
 ```
 ### 处理css模块HMR
-注意启动HMR后，css抽离会不⽣效，还有不⽀持contenthash，chunkhash
+注意启动HMR后，**css抽离会不⽣效**，还有不⽀持contenthash，chunkhash
 ### 处理js模块HMR
 #### 原理
 关闭浏览器刷新hotOnly:true,再使⽤module.hot.accept来观察模块更新 从⽽更新
