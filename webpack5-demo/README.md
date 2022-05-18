@@ -536,6 +536,7 @@ module.exports = merge(baseWebpackConfig, {
   - pre-push
 - [commitizen](https://github.com/commitizen/cz-cli)
   - 规范提交信息
+    - 可以不用这个工具，有提交信息校验就可以了
   - 采用项目局部安装，也可以全局
   - ``npm install commitizen cz-conventional-changelog -D``
   - 然后修改配置文件
