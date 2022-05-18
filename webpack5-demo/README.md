@@ -168,5 +168,364 @@ Babel在执⾏编译的过程中，会从项⽬根⽬录下的 .babelrc⽂件中
 ```
 
 ## 优化
+要优化构建过程，可以从减少查找过程、多线程、提前编译和 Cache 多个⻆度来优化。
+### 优化loader查找范围
+- test include exclude三个配置项来缩⼩loader的处理范围
+- 推荐include
 
+```
+//string
+include: path.resolve(__dirname, "./src"),
+//array
+include: [
+  path.resolve(__dirname, 'app/styles'),
+  path.resolve(__dirname, 'vendor/styles')
+]
+```
+exclude 优先级要优于 include 和 test ，所以当三者配置有冲突时， exclude 会优先于其他两个配置。
+### 优化resolve.modules配置
+resolve.modules⽤于配置webpack去哪些⽬录下寻找第三⽅模块，默认是['node_modules'],如果没有找到，就会去上⼀级⽬录../node_modules找，再没有会去../../node_modules中找，以此类推，和Node.js的模块寻找机制很类似。  
+如果我们的第三⽅模块都安装在了项⽬根⽬录下，就可以直接指明这个路径。
+```
+module.exports={
+  resolve:{
+    modules: [path.resolve(__dirname, "./node_modules")]
+  }
+}
+```
+### 优化resolve.alias配置
+resolve.alias配置通过别名来将原导⼊路径映射成⼀个新的导⼊路径
+```
+resolve: {
+  alias: {
+    "@assets": path.resolve(__dirname, "../src/images/"),
+  },
+},
+
+//html-css中使⽤
+.sprite3 {
+  background: url("~@assets/s3.png");
+}
+```
+### 优化resolve.extensions配置
+resolve.extensions在导⼊语句没带⽂件后缀时，webpack会⾃动带上后缀后，去尝试查找⽂件是否存在。
+```
+extensions:['.js','.json','.jsx','.ts']
+```
+- 后缀尝试列表尽量的⼩
+- 导⼊语句尽量的带上后缀。
+### 利⽤多线程提升构建速度
+#### thread-loader
+thread-loader 是针对 loader 进⾏优化的，它会将 loader 放置在⼀个 worker 池⾥⾯运⾏，以达到多线程构建。  
+thread-loader 在使⽤的时候，需要将其放置在其他 loader 之前
+```
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        include: path.resolve('src'),
+        use: [
+          'thread-loader'
+          // 你的⾼开销的loader放置在此 (e.g babel-loader)
+        ]
+      }
+    ]
+  }
+};
+```
+### 缓存cache相关
+#### babel-loader
+``babel-loader`` 提供了 ``cacheDirectory`` 配置给 Babel 编译时给定的⽬录，并且将⽤于缓存加载器的结果，但是这个设置默认是 false 关闭的状态，我们需要设置为 true ，这样 ``babel-loader`` 将使⽤默认的缓存⽬录 。  
+``node_modules/.cache/babel-loader`` ，如果在任何根⽬录下都没有找到``node_modules`` ⽬录，将会降级回退到操作系统默认的临时⽂件⽬录。
+```
+rules: [
+  {
+    test: /\.js$/,
+    loader: 'babel-loader',
+    options: {
+      cacheDirectory: true
+    },
+  }
+];
+```
+### 压缩速度优化
+相对于构建过程⽽⾔，压缩相对我们来说只有⽣产环境打包才会做，⽽且压缩我们除了添加 cache 和多线程⽀持之外，可以优化的空间较⼩。  
+**``使⽤terser-webpack-plugin``的时候可以通过下⾯的配置开启多线程和缓存**  
+```
+const TerserPlugin = require('terser-webpack-plugin');
+module.exports = {
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        cache: true, // 开启缓存
+        parallel: true // 多线程
+      })
+    ]
+  }
+};
+```
+### 使⽤externals优化cdn静态资源
+可以将⼀些JS⽂件存储在 CDN 上(减少 Webpack 打包出来的 js 体积)，在 index.html 中通过 标签引⼊
+```
+...
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+...
+```
+我们希望在使⽤时，仍然可以通过 import 的⽅式去引⽤(如 import $ from 'jquery' )，并且希望webpack 不会对其进⾏打包，此时就可以配置 externals 。
+```
+module.exports = {
+  //...
+  externals: {
+    //jquery通过script引⼊之后，全局中即有了 jQuery 变量
+    'jquery': 'jQuery'
+  }
+}
+```
+### 使⽤静态资源路径publicPath(CDN)
+CDN通过将资源部署到世界各地，使得⽤户可以就近访问资源，加快访问速度。要接⼊CDN，需要把⽹⻚的静态资源上传到CDN服务上，在访问这些资源时，使⽤CDN服务提供的URL。
+```
+output:{
+  publicPath: '//cdnURL.com', //指定存放JS⽂件的CDN地址
+}
+```
+### development vs Production模式区分打包
+``npm install webpack-merge -D``
+新建三个webpack的配置文件，文件名作如下区分:  
+- base基础公用的部分
+- dev开发配置部分
+- prod生产配置部分
+```
+const merge = require("webpack-merge")
+const commonConfig = require("./webpack.common.js")
+const devConfig = {
+ ...
+}
+module.exports = merge(commonConfig,devConfig)
+//package.js
+"scripts":{
+ "dev":"webpack server --config ./build/webpack.dev.js",
+ "build":"webpack --config ./build/webpack.prod.js"
+}
+```
+#### 基于环境变量区分
+``npm i cross-env -D``
+### css压缩
+- 借助 optimize-css-assets-webpack-plugin
+- 借助cssnano
+在 Webapck 中，``css-loader`` 已经集成了 ``cssnano``，我们还可以使⽤``optimize-css-assetswebpack-plugin``来⾃定义 ``cssnano`` 的规则。``optimize-css-assets-webpack-plugin`` 是⼀个 CSS 的压缩插件，默认的压缩引擎就是 ``cssnano``。我们来看下怎么在 Webpack 中使⽤这个插件：
+``npm install cssnano optimize-css-assets-webpack-plugin -D``
+```
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+new OptimizeCSSAssetsPlugin({
+  // 这⾥指定了引擎，不指定默认也是 cssnano
+  cssProcessor: require("cssnano"), 
+  cssProcessorOptions: {
+    discardComments: { removeAll: true }
+  }
+})
+```
+``optimize-css-assets-webpack-plugin`` 插件默认的 ``cssnano`` 配置已经做的很友好了，不需要额外的配置就可以达到最佳效果。
+### 压缩HTML
+- ``html-webpack-plugin``
+```
+new htmlWebpackPlugin({
+  title: "京东商城",
+  template: "./index.html",
+  filename: "index.html",
+  minify: {
+    // 压缩HTML⽂件
+    removeComments: true, // 移除HTML中的注释
+    collapseWhitespace: true, // 删除空⽩符与换⾏符
+    minifyCSS: true // 压缩内联css
+  }
+}),
+```
+### 压缩JS(在 mode=production 下，Webpack 会⾃动压缩代码)
+可以⾃定义⾃⼰的压缩⼯具，这⾥推荐``terser-webpack-plugin``，使⽤terser来压缩 JavaScript 代码。
+```
+const TerserPlugin = require('terser-webpack-plugin');
+module.exports = {
+  optimization: {
+    minimizer: [
+      new TerserPlugin()
+    ]
+  }
+};
+```
+#### Tree-Shaking 也是依赖这个插件
+```
+new TerserPlugin({
+  // 使⽤ cache，加快⼆次构建速度
+  cache: true,
+  terserOptions: {
+    comments: false,
+    compress: {
+      // 删除⽆⽤的代码
+      unused: true,
+      // 删掉 debugger
+      drop_debugger: true, // eslint-disable-line
+      // 移除 console
+      drop_console: true, // eslint-disable-line
+      // 移除⽆⽤的代码
+      dead_code: true // eslint-disable-line
+    }
+  }
+});
+```
+#### 多线程压缩也是依赖这个插件
+```
+const TerserPlugin = require('terser-webpack-plugin');
+module.exports = {
+  optimization: {
+    minimizer: [
+      new TerserPlugin(
+        parallel: true // 多线程
+      )
+    ]
+  }
+};
+```
+### tree Shaking：擦除⽆⽤的JS,CSS
+#### Css tree shaking
+``npm install glob-all purify-css purifycss-webpack -D``
+```
+const PurifyCSS = require('purifycss-webpack')
+const glob = require('glob-all')
+
+plugins:[
+  // 清除⽆⽤ css
+  new PurifyCSS({
+    paths: glob.sync([
+      // 要做 CSS Tree Shaking 的路径⽂件
+      // 请注意，我们同样需要对 html ⽂件进⾏ tree shaking
+      path.resolve(__dirname, './src/*.html'), 
+      path.resolve(__dirname, './src/*.js')
+    ])
+  })
+]
+```
+#### JS tree shaking
+**只⽀持import⽅式引⼊，不⽀持commonjs的⽅式引⼊**
+eg:minus会被去掉
+```
+//expo.js
+export const add = (a, b) => {
+  return a + b;
+};
+export const minus = (a, b) => {
+  return a - b;
+};
+//index.js
+import { add } from "./expo";
+add(1, 2);
+//webpack.config.js
+optimization: {
+  usedExports: true // 哪些导出的模块被使⽤了，再做打包
+}
+```
+**只要mode是production就会⽣效，develpoment的tree shaking是不⽣效的**  
+⽣产模式不需要配置，默认开启
+### sideEffects 处理副作⽤
+```
+//package.json
+"sideEffects":false //正常对所有模块进⾏tree shaking , 仅⽣产模式有效，需要配合usedExports
+或者 在数组⾥⾯排除不需要tree shaking的模块
+"sideEffects":['*.css','@babel/polyfill']
+```
+### 代码分割 code Splitting
+- 单⻚⾯应⽤spa
+  - 打包完后，所有⻚⾯只⽣成了⼀个bundle.js
+  - 代码体积变⼤，不利于下载
+  - 没有合理利⽤浏览器资源
+- 多⻚⾯应⽤mpa
+  - 如果多个⻚⾯引⼊了⼀些公共模块，那么可以把这些公共的模块抽离出来，单独打包。公共代码只需要下载⼀次就缓存起来了，避免了重复下载。
+  
+[SplitChunksPlugin](https://webpack.js.org/plugins/split-chunks-plugin/)
+```
+optimization: {
+  splitChunks: {
+    chunks: 'async',//对同步 initial，异步 async，所有的模块有效 all
+    minSize: 30000,//最⼩尺⼨，当模块⼤于30kb
+    maxSize: 0,//对模块进⾏⼆次分割时使⽤，不推荐使⽤
+    minChunks: 1,//打包⽣成的chunk⽂件最少有⼏个chunk引⽤了这个模块
+    maxAsyncRequests: 5,//最⼤异步请求数，默认5
+    maxInitialRequests: 3,//最⼤初始化请求书，⼊⼝⽂件同步请求，默认3
+    automaticNameDelimiter: '-',//打包分割符号
+    name: true,//打包后的名称，除了布尔值，还可以接收⼀个函数function
+    cacheGroups: {//缓存组
+      vendors: {
+        test: /[\\/]node_modules[\\/]/,
+        name:"vendor", // 要缓存的 分隔出来的 chunk 名称
+        priority: -10//缓存组优先级 数字越⼤，优先级越⾼
+      },
+      other:{
+        // 必须三选⼀： "initial" | "all" | "async"(默认就是async)
+        chunks: "initial", 
+        // 正则规则验证，如果符合就提取 chunk,
+        test: /react|lodash/, 
+        name:"other",
+        minSize: 30000,
+        minChunks: 1,
+      },
+      default: {
+        minChunks: 2,
+        priority: -20,
+        reuseExistingChunk: true//可设置是否重⽤该chunk
+      }
+    }
+  }
+}
+```
+一般不会设置那么多参数：  
+```
+optimization:{
+  //帮我们⾃动做代码分割
+  splitChunks:{
+    chunks:"all",//默认是⽀持异步，我们使⽤all
+  }
+}
+```
+### Scope Hoisting
+作⽤域提升（Scope Hoisting）是指 webpack 通过 ES6 语法的静态分析，分析出模块之间的依赖关系，尽可能地把模块放到同⼀个函数中。
+eg:
+```
+// hello.js
+export default 'Hello, Webpack';
+// index.js
+import str from './hello.js';
+console.log(str);
+// 默认配置这两个js文件会分开
+// 通过下面配置后这两个js文件的内容会合并在⼀起
+// webpack.config.js
+module.exports = {
+  optimization: {
+    concatenateModules: true
+  }
+};
+```
+### 使⽤⼯具量化
+#### ``speed-measure-webpack-plugin``:可以测量各个插件和 loader 所花费的时间
+```
+npm i speed-measure-webpack-plugin -D
+//webpack.config.js
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const smp = new SpeedMeasurePlugin();
+const config = {
+ //...webpack配置
+}
+module.exports = smp.wrap(config);
+```
+#### ``webpack-bundle-analyzer``:分析webpack打包后的模块依赖关系
+```
+npm install webpack-bundle-analyzer -D
+const BundleAnalyzerPlugin = require('webpack-bundleanalyzer').BundleAnalyzerPlugin;
+module.exports = merge(baseWebpackConfig, {
+  //....
+  plugins: [
+    //...
+    new BundleAnalyzerPlugin(),
+  ]
+})
+```
 ## 规范
