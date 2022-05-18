@@ -293,9 +293,18 @@ lighthouse http://baidu.com --output=json --output-path=./report.json
 - ``asset/inline`` 导出一个资源的 data URI。之前通过使用 ``url-loader`` 实现。
 - ``asset/source`` 导出资源的源代码。之前通过使用 raw-loader 实现。
 - ``asset`` 在导出一个 data URI 和发送一个单独的文件之间自动选择。之前通过使用 ``url-loader``，并且配置资源体积限制实现。
+```
+...
+{
+    test: /\.(png|jpe?g|gif)$/,
+    type: 'asset/resource',
+    generator: {
+        filename: 'images/[hash][ext][query]'
+    }
+}
+```
 
-
-## module federation
+## Module Federation
 使JavaScript应用得以在客户端或服务器上动态运行另一个 bundle的代码。而这个功能在一个叫ModuleFederationPlugin 插件实现的。  
 多个独立的构建可以形成一个应用程序。这些独立的构建不会相互依赖，因此可以单独开发和部署它们。
 这通常被称为微前端，但并不仅限于此。
