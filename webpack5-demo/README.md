@@ -529,3 +529,38 @@ module.exports = merge(baseWebpackConfig, {
 })
 ```
 ## 规范
+### 增加校验
+- [husky](https://github.com/typicode/husky)
+  - commit-msg
+  - pre-commit
+  - pre-push
+- [commitizen](https://github.com/commitizen/cz-cli)
+  - 规范提交信息
+  - 采用项目局部安装，也可以全局
+  - ``npm install commitizen cz-conventional-changelog -D``
+  - 然后修改配置文件
+    - 新增config->commitizen
+      - ``"path": "cz-conventional-changelog"``
+      - 可以设置中文翻译对应的选项
+    - scripts
+      - ``"commit": "cz"``
+  - 项目内安装，只能在当前项目目录下 npm run commit 代替 git commit
+- [commitlint](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/prompt)
+  - 对提交信息校验
+  - 新增commitlint.config.js
+  - 可以删除config->commitizen
+- [lint-staged](https://github.com/okonet/lint-staged)
+  - 校验修改的那部分文件
+  - ``npx mrm@2 lint-staged``
+  - 修改配置文件  
+```
+"lint-staged": {
+    "src/**/*.scss": [
+      "stylelint --fix"
+    ],
+    "src/**/*.{js,vue,ts,tsx}": "eslint --fix"
+}
+```
+- [standard-version](https://github.com/conventional-changelog/standard-version)
+  - CHANGELOG 自动生成
+  - 配置：versionrc.js
