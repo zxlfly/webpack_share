@@ -151,30 +151,19 @@ Babel在执⾏编译的过程中，会从项⽬根⽬录下的 .babelrc⽂件中
 ``npm install --save @babel/runtime @babel/runtime-corejs3``  
 ```
 {
-    "presets": [
-        [
-            "@babel/preset-env",
-            {
-                "targets": {
-                    //目标环境
-                    "edge": "8",
-                    "firefox": "60",
-                    "chrome": "67",
-                    "safari": "11"
-                  }
-                // "corejs": 2 //新版本需要指定核⼼库版本
-                // "useBuiltIns": "usage" //按需注⼊
-            }
-        ]
-    ],
-    "plugins": [
-        [
-          "@babel/plugin-transform-runtime",
-          {
-            "corejs": 3 // 指定 runtime-corejs 的版本，目前有 2 3 两个版本
-          }
-        ]
-    ]
+  "presets": [
+      [
+          "@babel/preset-env"
+      ]
+  ],
+  "plugins": [
+      [
+        "@babel/plugin-transform-runtime",
+        {
+          "corejs": 3 // 指定 runtime-corejs 的版本，目前有 2 3 两个版本
+        }
+      ]
+  ]
 }
 ```
 
