@@ -1,4 +1,4 @@
-import css from '../../css/index.scss'
+import css from '../../css/index'
 import pic from '../../images/6.jpg'
 console.log(pic);
 const img = new Image()

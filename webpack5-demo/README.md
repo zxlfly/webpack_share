@@ -529,7 +529,7 @@ module.exports = merge(baseWebpackConfig, {
 })
 ```
 ## 规范
-### 增加校验
+### 增加校验（https://juejin.cn/post/6934292467160514567#heading-11）
 - [husky](https://github.com/typicode/husky)
   - commit-msg
   - pre-commit

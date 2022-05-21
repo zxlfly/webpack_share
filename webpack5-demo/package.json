@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack",
-    "server": "webpack serve"
+    "dev": "webpack serve --config ./webpack.dev.config.js",
+    "serve": "webpack serve",
+    "build": "webpack serve --config ./webpack.prod.config.js"
   },
   "keywords": [],
   "author": "",
@@ -31,7 +32,8 @@
     "style-loader": "^3.3.1",
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.9.0"
+    "webpack-dev-server": "^4.9.0",
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.17.9"
