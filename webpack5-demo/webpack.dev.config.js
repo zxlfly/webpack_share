@@ -28,6 +28,14 @@ const { entry, HtmlWebpackPlugins } = loaderPages()
 const devConfig = {
   entry,
   mode: "development",
+  devtool: 'eval-cheap-module-source-map',
+  devServer: {
+    static: "./dist",
+    open: true,
+    port: 8081,
+    // hotOnly: true,
+  },
+  // caches: {},
   module: {
     rules: [
       {
@@ -76,12 +84,6 @@ const devConfig = {
         // loader执行顺序从右到左
         use: [
           {
-            loader: "babel-loader",
-            options: {
-              cacheDirectory: true
-            },
-          },
-          {
             loader: "replace-loader",
             options: {
               name: '同步'
@@ -96,13 +98,6 @@ const devConfig = {
         ]
       },
     ]
-  },
-  devtool: "source-map",
-  devServer: {
-    static: "./dist",
-    open: true,
-    port: 8081,
-    // hotOnly: true,
   },
   plugins: [
     ...HtmlWebpackPlugins,

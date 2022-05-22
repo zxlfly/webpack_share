@@ -74,7 +74,7 @@ clean-webpack-plugin:如何做到dist⽬录下某个⽂件或⽬录不被清空�
 - Module：第三⽅模块，包含loader的sourcemap（⽐如jsx to js ，babel的sourcemap）
 - inline： 将 .map 作为DataURI嵌⼊，不单独⽣成 .map ⽂件
 ```
-// 开发环境配置
+// 开发环境配置 下面是官网的字段顺序但是 这个例子 报错 得用eval-cheap-module-source-map 原因未知
 devtool:"cheap-module-eval-source-map",
 //线上不推荐开启
 devtool:"cheap-module-source-map", // 线上⽣成配置
@@ -252,6 +252,7 @@ rules: [
 ### 压缩速度优化
 相对于构建过程⽽⾔，压缩相对我们来说只有⽣产环境打包才会做，⽽且压缩我们除了添加 cache 和多线程⽀持之外，可以优化的空间较⼩。  
 **``使⽤terser-webpack-plugin``的时候可以通过下⾯的配置开启多线程和缓存**  
+webpack v5 开箱即带有最新版本的 terser-webpack-plugin。如果你使用的是 webpack v5 或更高版本，同时希望自定义配置，那么仍需要安装 terser-webpack-plugin。
 ```
 const TerserPlugin = require('terser-webpack-plugin');
 module.exports = {
@@ -311,21 +312,26 @@ module.exports = merge(commonConfig,devConfig)
 #### 基于环境变量区分
 ``npm i cross-env -D``
 ### css压缩
-- 借助 optimize-css-assets-webpack-plugin
+- 借助 css-minimizer-webpack-plugin
 - 借助cssnano
-在 Webapck 中，``css-loader`` 已经集成了 ``cssnano``，我们还可以使⽤``optimize-css-assetswebpack-plugin``来⾃定义 ``cssnano`` 的规则。``optimize-css-assets-webpack-plugin`` 是⼀个 CSS 的压缩插件，默认的压缩引擎就是 ``cssnano``。我们来看下怎么在 Webpack 中使⽤这个插件：
-``npm install cssnano optimize-css-assets-webpack-plugin -D``
+在 Webapck 中，``css-loader`` 已经集成了 ``cssnano``，我们还可以使⽤``optimize-css-assetswebpack-plugin``来⾃定义 ``cssnano`` 的规则。``css-minimizer-webpack-plugin`` 是⼀个 CSS 的压缩插件，默认的压缩引擎就是 ``cssnano``。我们来看下怎么在 Webpack 中使⽤这个插件：
+``npm install cssnano css-minimizer-webpack-plugin -D``
 ```
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const OptimizeCSSAssetsPlugin = require("css-minimizer-webpack-plugin");
 new OptimizeCSSAssetsPlugin({
-  // 这⾥指定了引擎，不指定默认也是 cssnano
-  cssProcessor: require("cssnano"), 
-  cssProcessorOptions: {
-    discardComments: { removeAll: true }
-  }
-})
+  // 引擎默认也是 cssnano
+  // 移除所有注释
+  minimizerOptions: {
+    preset: [
+      "default",
+      {
+        discardComments: { removeAll: true },
+      },
+    ],
+  },
+}),
 ```
-``optimize-css-assets-webpack-plugin`` 插件默认的 ``cssnano`` 配置已经做的很友好了，不需要额外的配置就可以达到最佳效果。
+``css-minimizer-webpack-plugin`` 插件默认的 ``cssnano`` 配置已经做的很友好了，不需要额外的配置就可以达到最佳效果。
 ### 压缩HTML
 - ``html-webpack-plugin``
 ```
@@ -347,6 +353,7 @@ new htmlWebpackPlugin({
 const TerserPlugin = require('terser-webpack-plugin');
 module.exports = {
   optimization: {
+    minimize: true,
     minimizer: [
       new TerserPlugin()
     ]
@@ -356,10 +363,16 @@ module.exports = {
 #### Tree-Shaking 也是依赖这个插件
 ```
 new TerserPlugin({
-  // 使⽤ cache，加快⼆次构建速度
-  cache: true,
+  extractComments: "all",
+  //parallel: true // 多线程
   terserOptions: {
-    comments: false,
+    // format: {
+    // },
+    output: {
+      // 是否保留代码中的注释，默认为保留，为了达到更好的压缩效果，可以设置为false
+      comments: false,
+      beautify: false,
+    },
     compress: {
       // 删除⽆⽤的代码
       unused: true,
@@ -368,10 +381,11 @@ new TerserPlugin({
       // 移除 console
       drop_console: true, // eslint-disable-line
       // 移除⽆⽤的代码
-      dead_code: true // eslint-disable-line
+      dead_code: true, // eslint-disable-line
+
     }
   }
-});
+})
 ```
 #### 多线程压缩也是依赖这个插件
 ```
@@ -388,9 +402,10 @@ module.exports = {
 ```
 ### tree Shaking：擦除⽆⽤的JS,CSS
 #### Css tree shaking
-``npm install glob-all purify-css purifycss-webpack -D``
+``npm install glob-all purify-css purgecss-webpack-plugin
+ -D``
 ```
-const PurifyCSS = require('purifycss-webpack')
+const PurifyCSS = require('purgecss-webpack-plugin')
 const glob = require('glob-all')
 
 plugins:[

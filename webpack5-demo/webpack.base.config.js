@@ -19,6 +19,12 @@ module.exports = {
         // loader执行顺序从右到左
         use: [
           {
+            loader: "babel-loader",
+            options: {
+              cacheDirectory: true
+            },
+          },
+          {
             loader: "replace-loader",
             options: {
               name: '同步'
@@ -36,12 +42,6 @@ module.exports = {
   },
   resolveLoader: {
     modules: [path.resolve(__dirname, './node_modules'), path.resolve(__dirname, './myLoader')]
-  },
-  devServer: {
-    static: "./dist",
-    open: true,
-    port: 8081,
-    // hotOnly: true,
   },
   plugins: [
     new CleanWebpackPlugin(),
