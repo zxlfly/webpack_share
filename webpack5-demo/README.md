@@ -363,7 +363,7 @@ module.exports = {
 #### Tree-Shaking 也是依赖这个插件
 ```
 new TerserPlugin({
-  extractComments: "all",
+  extractComments: false,
   //parallel: true // 多线程
   terserOptions: {
     // format: {
@@ -382,7 +382,6 @@ new TerserPlugin({
       drop_console: true, // eslint-disable-line
       // 移除⽆⽤的代码
       dead_code: true, // eslint-disable-line
-
     }
   }
 })
