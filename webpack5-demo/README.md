@@ -250,7 +250,6 @@ rules: [
 ];
 ```
 
-```
 ### 使⽤externals优化cdn静态资源
 可以将⼀些JS⽂件存储在 CDN 上(减少 Webpack 打包出来的 js 体积)，在 index.html 中通过 标签引⼊
 ```
