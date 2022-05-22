@@ -249,22 +249,7 @@ rules: [
   }
 ];
 ```
-### 压缩速度优化
-相对于构建过程⽽⾔，压缩相对我们来说只有⽣产环境打包才会做，⽽且压缩我们除了添加 cache 和多线程⽀持之外，可以优化的空间较⼩。  
-**``使⽤terser-webpack-plugin``的时候可以通过下⾯的配置开启多线程和缓存**  
-webpack v5 开箱即带有最新版本的 terser-webpack-plugin。如果你使用的是 webpack v5 或更高版本，同时希望自定义配置，那么仍需要安装 terser-webpack-plugin。
-```
-const TerserPlugin = require('terser-webpack-plugin');
-module.exports = {
-  optimization: {
-    minimizer: [
-      new TerserPlugin({
-        cache: true, // 开启缓存
-        parallel: true // 多线程
-      })
-    ]
-  }
-};
+
 ```
 ### 使⽤externals优化cdn静态资源
 可以将⼀些JS⽂件存储在 CDN 上(减少 Webpack 打包出来的 js 体积)，在 index.html 中通过 标签引⼊
@@ -348,7 +333,8 @@ new htmlWebpackPlugin({
 }),
 ```
 ### 压缩JS(在 mode=production 下，Webpack 会⾃动压缩代码)
-可以⾃定义⾃⼰的压缩⼯具，这⾥推荐``terser-webpack-plugin``，使⽤terser来压缩 JavaScript 代码。
+可以⾃定义⾃⼰的压缩⼯具，这⾥推荐``terser-webpack-plugin``，使⽤terser来压缩 JavaScript 代码。  
+webpack v5 开箱即带有最新版本的 terser-webpack-plugin。如果你使用的是 webpack v5 或更高版本，同时希望自定义配置，那么仍需要安装 terser-webpack-plugin。
 ```
 const TerserPlugin = require('terser-webpack-plugin');
 module.exports = {
