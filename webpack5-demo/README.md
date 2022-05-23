@@ -723,7 +723,7 @@ coverage
 ```
 // .eslintrc.js
 "extends": [
-		"prettier"
+	"prettier"
 ],
 ```
 ### eslint
