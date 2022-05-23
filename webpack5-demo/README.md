@@ -710,9 +710,14 @@ module.exports = {
   embeddedLanguageFormatting: 'off',
 }
 ```
-**忽略代码**
+**忽略代码.prettierignore**
 ```
+# Ignore artifacts:
+build
+coverage
 
+# Ignore all HTML files:
+*.html
 ```
 **eslint-config-prettier**可以关闭所有不必要或可能与Prettier冲突的规则。
 ```
