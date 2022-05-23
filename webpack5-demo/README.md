@@ -528,11 +528,11 @@ module.exports = merge(baseWebpackConfig, {
 })
 ```
 ## 规范
-### 增加校验（https://juejin.cn/post/6934292467160514567#heading-11）
-- [husky](https://github.com/typicode/husky)
+- [husky](https://typicode.github.io/husky/#/?id=manual)
   - commit-msg
   - pre-commit
   - pre-push
+  - 如果将 husky 安装在另一个目录中，需要[自定义](https://typicode.github.io/husky/#/?id=custom-directory)目录
 - [commitizen](https://github.com/commitizen/cz-cli)
   - 规范提交信息
     - 可以不用这个工具，有提交信息校验就可以了
@@ -545,7 +545,7 @@ module.exports = merge(baseWebpackConfig, {
     - scripts
       - ``"commit": "cz"``
   - 项目内安装，只能在当前项目目录下 npm run commit 代替 git commit
-- [commitlint](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/prompt)
+- [commitlint](https://commitlint.js.org/#/)
   - 对提交信息校验
   - 新增commitlint.config.js
   - 可以删除config->commitizen
@@ -564,3 +564,267 @@ module.exports = merge(baseWebpackConfig, {
 - [standard-version](https://github.com/conventional-changelog/standard-version)
   - CHANGELOG 自动生成
   - 配置：versionrc.js
+  - 目前官方推荐[release-please](https://github.com/googleapis/release-please)代替standard-version
+- [prettier](https://prettier.io/docs/en/install.html)
+- [eslint](https://eslint.org/)
+- [stylelint](https://stylelint.io/user-guide/get-started)
+
+### husky
+**安装husky**``npm install husky --save-dev``  
+**启用 Git 挂钩,生成一个.kusky文件夹**``npx husky install``  
+**在.husky文件夹内创建commit-msg文件**
+```
+#!/bin/sh
+npx --no-install commitlint --edit "$1"
+```
+### commitlint
+**安装**``npm install -g @commitlint/cli @commitlint/config-conventional``  
+**新增commitlint.config.js**  
+- feat: 一项新功能
+- fix: 一个错误修复
+- docs: 仅文档更改
+- style: 不影响代码含义的更改（空白，格式，缺少分号等）
+- refactor: 既不修正错误也不增加功能的代码更改（重构）
+- perf: 改进性能的代码更改
+- test: 添加缺失或更正现有测试
+- build: 影响构建系统或外部依赖项的更改（gulp，npm等）
+- ci: 对CI配置文件和脚本的更改
+- chore: 更改构建过程或辅助工具和库，例如文档生成
+```
+const types = ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'build', 'release', 'chore', 'revert'];
+
+module.exports = {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'type-empty': [2, 'never'],
+    'type-enum': [2, 'always', types],
+    'scope-case': [0, 'always'],
+    'subject-empty': [2, 'never'],
+    'subject-case': [0, 'never'],
+    'header-max-length': [2, 'always', 88],
+  },
+};
+```
+### lint-staged
+**安装husky**``npm install -D lint-staged``  
+**package.json**  
+```
+"lint-staged": {
+  "src/**/*.scss": [
+    "stylelint --fix"
+  ],
+  "src/**/*.{js,vue,ts,tsx}": [
+    "npm run lint"
+  ]
+}
+```
+**在.kusky文件夹内创建pre-commit文件**  
+```
+#!/bin/sh
+npx --no-install lint-staged 
+npm run lint
+```
+### standard-version
+**安装**``npm i -D standard-version``  
+**package.json**  
+```
+{
+  "scripts": {
+    "release": "standard-version"
+  }
+}
+```
+**.husky/pre-push**
+```
+#!/bin/sh
+
+npm run release
+```
+**自定义配置不同类型对应显示文案,在根目录新建 versionrc.js**
+```
+module.exports = {
+    "types": [
+        { "type": "chore", "section": "Others", },
+        { "type": "revert", "section": "Reverts", },
+        { "type": "feat", "section": "Features", },
+        { "type": "fix", "section": "Bug Fixes", },
+        { "type": "improvement", "section": "Feature Improvements", },
+        { "type": "docs", "section": "Docs", },
+        { "type": "style", "section": "Styling", },
+        { "type": "refactor", "section": "Code Refactoring", },
+        { "type": "perf", "section": "Performance Improvements", },
+        { "type": "test", "section": "Tests", },
+        { "type": "build", "section": "Build System", },
+        { "type": "ci", "section": "CI", }
+    ]
+}
+```
+### prettier
+**安装**``npm install prettier -D``  
+**创建配置文件.prettierrc**
+```
+{
+  // 大括号内的首尾需要空格
+  "bracketSpacing": true,
+  // jsx 标签的反尖括号需要换行
+  "jsxBracketSameLine": true,
+  // jsx 使用单引号代替双引号
+  "jsxSingleQuote": false,
+  // 一行最多 100 字符
+  "printWidth": 140,
+  // 行尾需要有分号
+  "semi": true,
+  // 关闭 tab 缩进
+  "useTabs": false,
+  // 末尾不需要逗号 <es5|none|all>
+  "trailingComma": "es5",
+  // jsx 使用单引号代替双引号
+  "singleQuote": true,
+  // 使用 2个tab 缩进
+  "tabWidth": 2,
+  // 换行符使用 lf 结尾  <lf|crlf|cr|auto>
+  "endOfLine": "auto",
+  // 使用默认的折行标准
+  "proseWrap": "preserve"
+  // 对象key是否使用引号 <as-needed|consistent|preserve>
+  // as-needed 仅在需要的时候使用
+  // consistent 有一个属性需要引号，就都需要引号
+  // preserve 保留用户输入的情况
+  quoteProps: 'preserve',
+  // 大括号内的首尾需要空格
+  bracketSpacing: true,
+  // jsx 标签的反尖括号需要换行
+  jsxBracketSameLine: false,
+  // 箭头函数，只有一个参数的时候，也需要括号 <always|avoid>
+  arrowParens: 'avoid',
+  // 每个文件格式化的范围是文件的全部内容
+  rangeStart: 0,
+  rangeEnd: Infinity,
+  // 不需要写文件开头的 @prettier 用于逐步过渡大型项目中未被格式化的代码标识
+  requirePragma: false,
+  // 不需要自动在文件开头插入 @prettier 用于逐步过渡大型项目中未被格式化的代码标识
+  insertPragma: false,
+  // 根据显示样式决定 html 要不要折行 <css|strict|ignore>"
+  htmlWhitespaceSensitivity: 'css',
+  //控制是否 prettier 格式的引用代码嵌入在文件中。
+  embeddedLanguageFormatting: 'off',
+}
+```
+**忽略代码**
+```
+
+```
+**eslint-config-prettier**可以关闭所有不必要或可能与Prettier冲突的规则。
+```
+// .eslintrc.js
+"extends": [
+		"prettier"
+],
+```
+### eslint
+**安装**``npm install eslint --save-dev``  
+**[.eslintrc.js](https://cn.eslint.org/docs/rules/)**
+```
+module.exports = {
+	"env": {
+		"browser": true,
+		"es2021": true
+	},
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended"
+	],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 13,
+		"sourceType": "module"
+	},
+	"plugins": [
+		"@typescript-eslint"
+	],
+	"rules": {
+		"indent":[
+			"warn",
+			"tab"
+		],
+		"semi": [
+			"error",
+			"never"
+		],
+		"no-unused-vars":1,
+		"quotes": [1, "double"],
+		"@typescript-eslint/no-explicit-any": ["off"]
+	},
+	"globals": {
+		"window": true
+	}
+}
+```
+**.eslintignore**排除目标
+```
+node_modules/*
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+lib
+build
+```
+### stylelint
+**安装**``npm install --save-dev stylelint stylelint-config-standard``  
+**在项目的根目录中创建一个配置文件.stylelintrc.json**  
+```
+{
+    "extends": [
+      //stylelint-config-recommended - 只打开避免错误的规则
+      //stylelint-config-standard - 通过打开强制约定的规则扩展推荐的一个
+        "stylelint-config-standard",
+        "stylelint-config-recommended-scss"
+    ],
+    "plugins": [
+        "stylelint-scss"
+    ],
+    "rules": {
+        "string-quotes": "single",
+        "property-no-unknown": true,
+        "selector-pseudo-class-no-unknown": true,
+        "at-rule-empty-line-before": ["always",{
+            "except":["blockless-after-same-name-blockless","first-nested","inside-block"],
+            "ignore": ["after-comment", "first-nested"]
+        }],
+        "rule-empty-line-before":["always",{
+            "except": [ "after-single-line-comment",  "first-nested"]
+        }],
+        "block-no-empty": true,
+        "selector-pseudo-element-no-unknown": [
+            true,
+            {
+                "ignorePseudoElements": [
+                    "ng-deep"
+                ]
+            }
+        ],
+        "selector-type-no-unknown": [
+            true,
+            {
+                "ignoreTypes": [
+                    "/^d-/"
+                ]
+            }
+        ],
+        "color-hex-length": "long",
+        "no-descending-specificity": null,
+        "font-family-no-missing-generic-family-keyword": null,
+        "no-duplicate-selectors": null,
+        "declaration-block-no-duplicate-properties": [
+            true,
+            {
+                "ignore": [
+                    "consecutive-duplicates"
+                ]
+            }
+        ]
+    }
+}
+```
