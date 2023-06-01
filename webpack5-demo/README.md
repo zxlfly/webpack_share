@@ -579,6 +579,7 @@ npx --no-install commitlint --edit "$1"
 ```
 ### commitlint
 **安装**``npm install -g @commitlint/cli @commitlint/config-conventional``  
+建议不要使用全局安装  
 **新增commitlint.config.js**  
 - feat: 一项新功能
 - fix: 一个错误修复
